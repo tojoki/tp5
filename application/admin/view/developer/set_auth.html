@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    {include file="Public:header" /}
+    <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+        {include file="Public:nav" /}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                    <a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">开发管理</a> /
+                                    <a href="#" class="tip-bottom">菜单列表</a> /
+                                    <a href="#" class="current"> 查看权限功能点</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10">
+                <form action="{:url('set_auth')}" class="form-inline" method="post" id='form-wizard'>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="功能点名称" name="title" size="10">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="控制器" name="mm" size="10">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="方法" name="aa" size="10">
+                    </div>
+                    <input name='pid' type='hidden' value="{$Request.param.pid}">
+                    <button type="submit" class="btn btn-success btn-sm">添加</button>
+                    <a href="{:url('menu_lists')}" class="btn btn-danger btn-sm">返回</a>
+                </form>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins" style="position: relative;">
+                    <div class="ibox-content">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="long-tr">                                     
+                                    <th width="20%">功能名称</th>
+                                    <th width="15%">位置</th>
+                                    <th width="15%">操作</th>
+                                    <th width="20%">功能名称</th>
+                                    <th width="15%">位置</th>
+                                    <th width="15%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="long-td">                                        
+                                    {volist name='lists' id='v' key='key'}
+                                        <td style="text-align: left; padding-left: 15px;color:{$v['is_hide']==1?'#CCC':''}">{$v['title']}</td> 
+                                        <td>{$v['m']}/{$v['a']}</td>
+                                        <td>
+                                            <a data-href="{:url('menu_del',array('id'=>$v['id']))}" title="删除" class="menu_del">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>   
+                                        {if condition="($key%2 eq '0') and ($key lt count($lists))"}
+                                            </tr><tr class="long-td">
+                                        {/if}              
+                                    {/volist}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {include file="Public:footer" /}
+        {include file="Public:form" /}
+    </body>
+    <script type="text/javascript">
+        //表单验证
+        var valid = $("#form-wizard").Validform({
+            tiptype:function(msg){
+                layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+            },
+            tipSweep:true,
+            postonce:true,
+            beforeSubmit:function(form){
+                var title=$('input[name=title]').val();
+                if(!title){
+                    layer.msg('请输入功能点名称',{skin:'layui-layer-hui',time:1000});
+                    return false;
+                }
+                var mm=$('input[name=mm]').val();
+                if(!mm){
+                    layer.msg('请输入控制器',{skin:'layui-layer-hui',time:1000});
+                    return false;
+                }
+                var aa=$('input[name=aa]').val();
+                if(!aa){
+                    layer.msg('请输入方法',{skin:'layui-layer-hui',time:1000});
+                    return false;
+                }
+                layer.load(1, {shade: [0.3, '#393D49']});
+            },
+            ajaxPost:true,
+            callback:function(data){
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                    if(data.returnCode == 'SUCCESS'){
+                        window.location.reload();
+                    }else{
+                        layer.close(layer.load());
+                    }
+                }});
+            }
+        });
+
+        $(".menu_del").click(function(){
+            var thi= $(this);            
+            var href = thi.data('href');
+            layer.confirm('确定删除？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS')window.location.reload(); //重载页面
+                    }});
+                });
+            });
+        });
+    </script>
+</html>

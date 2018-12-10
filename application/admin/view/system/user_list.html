@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	{include file="Public:page_css" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom"> 系统管理</a> / 
+									<a href="#" class="tip-bottom">用户管理</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<a href="{:url('set_user')}" class="btn btn-primary btn-sm">添加用户</a>
+		<br />
+		<br />
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5><i class="fa fa-tasks"></i> 用户列表</h5>
+					</div>
+					<div class="ibox-content">
+						<table class="table table-bordered">
+							<thead>
+								<tr class="long-tr">
+									<th>编号</th>
+									<th>登陆账号</th>
+									<th>显示名称</th>
+									<th>头像</th>
+									<th>所属角色</th>
+									<th>状态</th>
+									<th>添加时间</th>
+									<th>最后登陆时间</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								{volist name="list" id="vo" key="key"}
+									<tr class="long-td">
+										<td>{$key}</td>
+										<td>{$vo.user}</td>
+										<td>{$vo.username}</td>
+										<td><img class="img-circle" src="{$vo.userimg|default='/uploads/default.jpg'}" style="width: 70px;height: 70px" /></td>
+										<td>{$vo['role']=='0'?'超级管理员':$vo['role_name']}</td>
+										<td>
+											{switch name='vo.state'}
+												{case value='1'}<span class='label label-primary'>正常</span>{/case}
+												{case value='0'}<span class='label label-danger'>停用</span>{/case}
+											{/switch}
+										</td>
+										<td>{$vo.add_time|date='Y-m-d',###}</td>
+										<td>{$vo.last_logintime|date='Y-m-d H:i:s',###}</td>
+										<td>
+											<a href="{:url('set_user',array('id'=>$vo['id']))}" class="btn btn-primary btn-sm">编辑</a>&nbsp;&nbsp;
+										{if condition="$Think.session.admin.id neq $vo['id']"}
+											<a data-href="{:url('del_user',array('id'=>$vo['id']))}" class="btn btn-danger btn-sm del">删除</a>
+										{/if}
+										</td>
+									</tr>
+								{/volist}
+							</tbody>
+						</table>
+						<div class="pages" style=" text-align: right;">
+							{$list->render()}
+							<li class="rows">共<b>{$list->total()}</b>条记录&nbsp;第<b>{$list->currentPage()}</b>页/共<b>{$list->lastPage()}</b>页</li>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+	</body>
+	<script type="text/javascript">
+		$(".del").click(function(){
+            var thi= $(this);            
+            var href = thi.data("href");
+            layer.confirm('确定删除？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS'){
+                            window.location.reload();
+                        }
+                    }});
+                });
+            });
+        });
+	</script>
+</html>

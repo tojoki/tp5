@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+    {include file="Public:header" /}
+    <style>
+        .page-heading { padding: 0; height: 40px; line-height: 40px; }
+    </style>
+    <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+        {include file="Public:nav" /}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                    <a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">开发管理</a> /
+                                    <a href="#" class="current"> 菜单列表</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="{:url('set_menu')}" class="btn btn-primary btn-sm">添加一级菜单</a>
+        <a href="{:url('index')}" class="btn btn-danger btn-sm">返回</a>
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins" style="position: relative;">
+                    <div class="ibox-content">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="long-tr">                                     
+                                    <th width="30%">菜单名称</th>
+                                    <th width="20%">位置</th>
+                                    <th width="10%">层级</th>
+                                    <th width="10%">排序</th>
+                                    <th width="10%">状态</th>
+                                    <th width="20%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                    foreach($lists as $k=>$v){
+                                        if($v['level']==1){
+                                            $v['title']="<i class='".$v['ico']."'></i>&nbsp;".$v['title'];
+                                        }else if($v['level']==2){
+                                            if($lists[$k+1] && $lists[$k+1]['level']==2){
+                                                //说明不是最后一个数据
+                                                $v['title']='├┈┈┈'.$v['title'];
+                                            }
+                                            if($lists[$k+1] && $lists[$k+1]['level']==1){
+                                                //说明是最后一个数据
+                                                $v['title']='└┈┈┈'.$v['title'];
+                                            }
+                                            if(!$lists[$k+1] && $lists[$k]['level']==2){
+                                                //说明是所有列表的最后一个数据
+                                                $v['title']='└┈┈┈'.$v['title'];
+                                            }
+                                        }
+                                ?>
+                                    <tr class="long-td">                                        
+                                        <td style="text-align: left; padding-left: 15px;color:{$v['is_hide']==1?'#CCC':''}">
+                                            {$v['title']}
+                                        </td> 
+                                        <td>
+                                            {if condition="($v['level'] neq '1') or (($v['level'] eq '1') and ($v['single'] eq '1'))"}
+                                                <a href="{:url($v['m'].'/'.$v['a'])}" style="color:{$v['is_hide']==1?'#CCC':''}">
+                                                    {$v['m']}/{$v['a']}
+                                                </a>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            <span style="color:{$v['is_hide']==1?'#CCC':''}">{$v['level']}</span>
+                                        </td> 
+                                        <td>
+                                            <span style="color:{$v['is_hide']==1?'#CCC':''}">{$v['sort']}</span>
+                                        </td>    
+                                        <td>
+                                            <span style="color:{$v['is_hide']==1?'#CCC':''}">{$v['is_hide']==1?'隐藏':'显示'}</span>
+                                        </td>     
+                                        <td>
+                                            {if condition="$v['level'] eq '1'"}
+                                                <!-- 多节点的时候再考虑增加子菜单 -->
+                                                {if condition="$v['single'] eq '0'"}
+                                                    <a href="{:url('set_menu_son',array('pid'=>$v['id']))}">
+                                                        <i class="fa fa-plus" title='增加子菜单'></i>
+                                                    </a>    
+                                                {/if}
+
+                                                <a href="{:url('set_auth',array('pid'=>$v['id']))}">
+                                                    <i class="fa fa-exclamation-triangle" title='查看权限功能点'></i>
+                                                </a> 
+                                                
+                                                <a href="{:url('set_menu',array('id'=>$v['id']))}">
+                                                    <i class="fa fa-pencil" title='修改'></i>
+                                                </a>
+                                            {else/}
+                                                 <a href="{:url('set_menu_son',array('pid'=>$v['pid'],'id'=>$v['id']))}">
+                                                    <i class="fa fa-pencil" title='修改'></i>
+                                                </a>
+                                            {/if}
+
+                                                <a data-href="{:url('sort_up_down',array('id'=>$v['id'],'type'=>'up'))}" title="上移" class="sort_up_down">
+                                                    <i class="fa fa-arrow-up"></i>
+                                                </a>
+                                                <a data-href="{:url('sort_up_down',array('id'=>$v['id'],'type'=>'down'))}" title="下移" class="sort_up_down">
+                                                    <i class="fa fa-arrow-down"></i>
+                                                </a>
+                                            
+                                            {if condition="$v['is_hide'] eq 1"}
+                                                <a data-href="{:url('menu_lock',array('id'=>$v['id'],'is_hide'=>0,'level'=>$v['level']))}" title="点击显示" data-id='0' class="menu_lock">
+                                                    <i class="fa fa-lock"></i>
+                                                </a>
+                                            {else/}
+                                                <a data-href="{:url('menu_lock',array('id'=>$v['id'],'is_hide'=>1,'level'=>$v['level']))}" title="点击隐藏" data-id='1' class="menu_lock">
+                                                    <i class="fa fa-unlock"></i>
+                                                </a>
+                                            {/if}
+                                            <a data-href="{:url('menu_del',array('id'=>$v['id']))}" title="删除" class="menu_del">
+                                                    <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>                                       
+                                    </tr>
+                                <?php
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {include file="Public:footer" /}
+    </body>
+    <script type="text/javascript">
+
+        $(".menu_lock").click(function(){
+            var thi= $(this);            
+            var href = thi.data('href');
+            var id = thi.data('id');
+            if(id==1){
+                var is_hide='隐藏';
+            }else{
+                var is_hide='显示';
+            }
+            layer.confirm('该菜单下的子菜单也会'+is_hide+',确定此操作？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS')window.location.reload(); //重载页面
+                    }});
+                });
+            });
+        });
+
+        $(".menu_del").click(function(){
+            var thi= $(this);            
+            var href = thi.data('href');
+            layer.confirm('该菜单下的子菜单/功能点也会删除 确定此操作？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS')window.location.reload(); //重载页面
+                    }});
+                });
+            });
+        });
+
+        $(".sort_up_down").click(function(){
+            var thi= $(this);            
+            var href = thi.data('href');
+            $.getJSON(href,function(data){
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                    if(data.returnCode == 'SUCCESS')window.location.reload(); //重载页面
+                }});
+            });
+        });
+
+    </script>
+</html>

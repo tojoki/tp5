@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    {include file="Public:header" /}
+    <link rel="stylesheet" href="/static/admin/css/layui_admin.css" media="all">
+    <body class="fixed-sidebar full-height-layout gray-bg childrenBody" style="overflow:hidden">
+        {include file="Public:nav" /}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                    <a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">开发管理</a> /
+                                    <a href="#" class="current"> 功能列表</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="panel_box row">
+                <div class="panel col">
+                    <a href="{:url('site_index')}">
+                        <div class="panel_icon">
+                            <i class="fa fa-internet-explorer"></i>
+                        </div>
+                        <div class="panel_word newMessage">
+                            <span></span>
+                            <cite>网站管理</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col">
+                    <a href="{:url('menu_lists')}">
+                        <div class="panel_icon" style="background-color:#FF5722;">
+                            <i class="fa fa-th-list"></i>
+                        </div>
+                        <div class="panel_word userAll">
+                            <span></span>
+                            <cite>菜单管理</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col">
+                    <a href="{:url('add_table')}">
+                        <div class="panel_icon" style="background-color:#009688;">
+                            <i class="fa fa-cube"></i>
+                        </div>
+                        <div class="panel_word userAll">
+                            <span></span>
+                            <cite>快速建表</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col">
+                    <a href="javascript:;" class='add0'>
+                        <div class="panel_icon" style="background-color:#5FB878;">
+                            <i class="fa fa-cubes"></i>
+                        </div>
+                        <div class="panel_word imgAll">
+                            <span></span>
+                            <cite>批量新增</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col">
+                    <a href="javascript:;" class='add1'>
+                        <div class="panel_icon" style="background-color:#F7B824;">
+                            <i class="fa fa-plus-circle"></i>
+                        </div>
+                        <div class="panel_word waitNews">
+                            <span></span>
+                            <cite>新建模块</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col max_panel">
+                    <a href="javascript:;" class='add2'>
+                        <div class="panel_icon" style="background-color:#2F4056;">
+                            <i class="fa fa-plus-square"></i>
+                        </div>
+                        <div class="panel_word waitNews">
+                            <span></span>
+                            <cite>新建控制器</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col max_panel">
+                    <a href="javascript:;" class='del' data-href="{:url('del')}">
+                        <div class="panel_icon" style="background-color:#ED5565;">
+                            <i class="fa fa-trash"></i>
+                        </div>
+                        <div class="panel_word waitNews">
+                            <span></span>
+                            <cite>清除缓存</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col max_panel">
+                    <a href="javascript:;" class='logout' data-href="{:url('logout')}">
+                        <div class="panel_icon" style="background-color:#CCCCCC;">
+                            <i class="fa fa-sign-out"></i>
+                        </div>
+                        <div class="panel_word waitNews">
+                            <span></span>
+                            <cite>开发者登出</cite>
+                        </div>
+                    </a>
+                </div>
+                <div class="panel col max_panel">
+                    <a href="javascript:;" class='del_all'>
+                        <div class="panel_icon" style="background-color:#000000;">
+                            <i class="fa fa-eraser"></i>
+                        </div>
+                        <div class="panel_word waitNews">
+                            <span></span>
+                            <cite>一键移除</cite>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        {include file="Public:footer" /}
+        {include file="Public:form" /}
+    </body>        
+    <script type="text/javascript">
+        //批量新增
+        $('.add0').on('click',function(){
+            var index = layer.open({
+                type: 2,
+                title:"批量新增",
+                content: '{:url("insert_values")}',
+                area: ['800px', '400px'],
+                skin: 'layui-layer-rim',
+                maxmin: true,
+                scrollbar: true,
+            });
+        });
+
+        //新建模块
+        $('.add1').on('click',function(){
+            var index = layer.open({
+                type: 2,
+                title:"新建模块",
+                content: '{:url("add_new_module")}',
+                area: ['800px', '240px'],
+                skin: 'layui-layer-rim',
+                maxmin: true,
+                scrollbar: true,
+            });
+        });
+
+        //新建控制器
+        $('.add2').on('click',function(){
+            var index = layer.open({
+                type: 2,
+                title:"新建控制器",
+                content: '{:url("add_controller")}',
+                area: ['800px', '360px'],
+                skin: 'layui-layer-rim',
+                maxmin: true,
+                scrollbar: true,
+            });
+        });
+
+        //清除缓存
+        $(".del").click(function(){
+            var thi= $(this);            
+            var href = thi.data("href");
+            $.getJSON(href,function(data){
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                    if(data.returnCode == 'SUCCESS'){
+                        window.location.reload();
+                    }
+                }});
+            });
+        });
+
+        //登出开发者
+        $(".logout").click(function(){
+            var thi= $(this);            
+            var href = thi.data('href');
+            layer.confirm('确定此操作？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS')window.location.reload(); //重载页面
+                    }});
+                });
+            });
+        });
+
+        //一键移除
+        $(".del_all").click(function(){
+            layer.confirm('此操作将完全移除开发者模式 确定？', {icon: 3}, function(index){
+                var index = layer.open({
+                    type: 2,
+                    title:"一键移除",
+                    content: '{:url("del_all")}',
+                    area: ['800px', '300px'],
+                    skin: 'layui-layer-rim',
+                    maxmin: true,
+                    scrollbar: true,
+                });    
+            });
+        });
+    </script>
+</html>

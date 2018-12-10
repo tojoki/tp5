@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	{include file="Public:page_css" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom">系统管理</a> /
+									<a href="#" class="tip-bottom">用户管理</a> /
+									<a href="#" class="tip-bottom">设置用户</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>设置用户</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link">
+								<i class="fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<form class="form-horizontal" method="post" action="{:url('set_user')}" name="basic_validate" id="signupForm">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">用户名</label>
+								<div class="col-sm-3">
+									<input type="text" name="user" id="user" value="{$info.user}" class="form-control">
+								</div>
+								<label class="col-sm-2 control-label">显示名称</label>
+								<div class="col-sm-3">
+									<input type="text" id="username" name="username" value="{$info.username}" class="form-control">
+								</div>
+							</div>
+						{empty name='info.id'}
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">密码</label>
+								<div class="col-sm-3">
+									<input type="password" id="password" name="password" class="form-control">
+								</div>
+								<label class="col-sm-2 control-label">确认密码</label>
+								<div class="col-sm-3">
+									<input type="password" id="repassword" name="repassword" class="form-control">
+								</div>
+							</div>
+						{/empty}
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">头像 </label>
+								<div class="col-sm-6">
+									<div style="width: 200px; height: 90px; float: left;">
+										<input type="hidden" name="userimg" value="{$info.userimg}" id="data_photo" />
+										<input id="photo_file" name="photo_file" type="file" multiple="true" value="" />
+									</div>
+									<div style="width: 200px; height: 90px; float: left;">
+										<img id="upload_img" class="img-circle" src="{$info.userimg|default='/uploads/touxiang_default.gif'}" style="width: 80px;height: 80px" />
+									</div>
+								</div>
+							</div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+				                <label class="col-sm-2 control-label">所属角色</label>
+				                <div class="col-sm-6">                   
+				                    <select name = "role" class="form-control m-b chosen-select">
+				                    	<option value="0" {if condition="$info['role'] eq '0'"}selected{/if} >超级管理员</option>
+				                    {volist name="roleList" id="vo"}
+				                        <option value="{$vo.id}" {eq name="vo.id" value="$info.role"}selected{/eq} >{$vo.name}</option>
+				                    {/volist}                    
+				                    </select>
+				                </div>
+				            </div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">备注信息</label>
+								<div class="col-sm-3">
+									<input type="text" name="note" id="note" value="{$info.note}" class="form-control">
+								</div>
+								<label class="col-sm-2 control-label">是否使用</label>
+								<div class="col-sm-3">
+									<div class="radio">
+										{if condition="$info['state'] eq '1' "}
+											<input type="checkbox" name='state' value="1" class="js-switch" checked />
+	                        			{else/}
+	                        				<input type="checkbox" name='state' value="1" class="js-switch" />
+	                        			{/if}
+									</div>
+								</div>
+							</div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-2">
+									<input name='id' type='hidden' value='{$info.id}'>
+									<button class="btn btn-primary" type="submit">保存内容</button>
+									<a class="btn btn-danger" href="{:url('user_list')}">取消</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+		{include file="Public:upload" /}
+	</body>
+	<script type="text/javascript">
+		$("#photo_file").uploadify({
+			'swf': '/static/common/js/uploadify/uploadify.swf?t={$nowtime}',
+			'uploader': '{:url("Upload/new_upload")}',
+			'cancelImg': '/static/common/js/uploadify/uploadify-cancel.png',
+			'buttonText': '上传头像',
+			'height': 35,
+			'fileTypeExts': '*.gif;*.jpg;*.png',
+			'queueSizeLimit': 1,
+			'onUploadSuccess': function(file, data, response) {
+				$("#data_photo").val(data);
+				$("#upload_img").attr('src', data).show();
+			}
+		});
+	       
+	    var config = {
+	        '.chosen-select': {},                    
+	    }
+	    for (var selector in config) {
+	        $(selector).chosen(config[selector]);
+	    }
+
+	    //IOS开关样式配置
+        var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+
+        //表单验证
+		var valid = $("#signupForm").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	var user=$('input[name=user]').val();
+				if(!user){
+					layer.msg('请输入用户名',{skin:'layui-layer-hui',time:1000});
+					return false;
+				}
+				var username=$('input[name=username]').val();
+				if(!username){
+					layer.msg('请输入显示名称',{skin:'layui-layer-hui',time:1000});
+					return false;
+				}
+				var id=$('input[name=id]').val();
+				if(!id){
+					var password=$('input[name=password]').val();
+					if(!password){
+						layer.msg('请输入密码',{skin:'layui-layer-hui',time:1000});
+						return false;
+					}
+					var repassword=$('input[name=repassword]').val();
+					if(!repassword){
+						layer.msg('请确认密码',{skin:'layui-layer-hui',time:1000});
+						return false;
+					}
+					if(password!=repassword){
+						layer.msg('两次密码不一致',{skin:'layui-layer-hui',time:1000});
+						return false;
+					}
+				}
+				var userimg=$('input[name=userimg]').val();
+				if(!userimg){
+					layer.msg('请上传头像',{skin:'layui-layer-hui',time:1000});
+					return false;
+				}
+				layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+		                window.location.href = "{:url('user_list')}";
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+	</script>
+</html>
+

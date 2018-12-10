@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	    <title>{:config('site.sitename')}</title>
+	    <meta name="keywords" content="{:config('site.sitename')}">
+	    <meta name="description" content="{:config('site.sitename')}">
+	    <link href="/static/admin/css/bootstrap.min.css" rel="stylesheet">
+	    <link href="/static/admin/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+	    <link href="/static/admin/css/animate.min.css" rel="stylesheet">
+	    <link href="/static/admin/css/style.min.css" rel="stylesheet">
+	    <link href="/static/admin/css/login.min.css" rel="stylesheet">      
+	    <link href="/static/admin/login/supersized.css" rel="stylesheet">
+	    <script>
+	    	var url='/static';
+	    	if(window.top!==window.self){window.top.location=window.location};
+	    </script>
+	</head>
+	<body class="signin" style="font-size: 14px;">
+		<div class="signinpanel">
+	        <div class="row">
+	            <div class="col-sm-7">
+	                <div class="signin-info">
+	                    <div class="logopanel m-b">
+	                        <h1>[ {:config('site.sitename')} ]</h1>
+	                    </div>
+	                    <div class="m-b"></div>
+	                    <ul class="m-b">
+	                        <li><i class="fa fa-arrow-circle-o-right m-r-xs"></i>欢迎使用{:config('site.sitename')}</li>
+	                    </ul>
+	                    <strong> </strong>
+	                </div>
+	            </div>
+	            <div class="col-sm-5">
+	                <form id='basic_validate' method="post" action="{:url('index')}">
+	                    <input type="text" class="form-control uname" id="username" name="user" placeholder="用户名" />
+	                    <input type="password" class="form-control pword m-b" id="password" name="password" placeholder="密码" />
+	                    <input type="submit" id="btn_login" class="btn btn-success btn-block" value="登&nbsp;&nbsp;&nbsp;录">
+	                </form>
+	            </div>
+	        </div>
+	        <div class="signup-footer">
+	          {:config('site.address')}&nbsp;&nbsp;&nbsp;{:config('site.copyright')}
+	        </div>
+	    </div>
+	</body>
+    <script src="/static/admin/login/jquery-1.8.2.min.js" ></script>
+    <script src="/static/admin/login/supersized.3.2.7.min.js" ></script>
+    <script src="/static/admin/login/supersized-init.js" ></script>      
+    <script src="/static/admin/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/static/admin/js/bootstrap.min.js?v=3.3.5"></script>
+    <script src="/static/admin/layer/layer.js"></script>
+    {include file="Public:form" /}
+    <script type="text/javascript">
+    	document.onkeydown=function(event){
+           e = event ? event :(window.event ? window.event : null);
+           if(e.keyCode==13){
+                $('#btn_login').click();
+           }
+        }
+        //表单验证
+		var valid = $("#basic_validate").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	var user=$('input[name=user]').val();
+				if(!user){
+					layer.msg('请输入用户名',{skin:'layui-layer-hui',time:1000});
+					return false;
+				}
+				var password=$('input[name=password]').val();
+				if(!password){
+					layer.msg('请输入密码',{skin:"layui-layer-hui",time:1000});
+					return false;
+				}
+				layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+		                window.location.href = "{:url('Index/index')}";
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+    </script>
+</html>

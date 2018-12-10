@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom">微信设置</a> /
+									<a href="#" class="current">基础设置</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>基础设置</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link">
+								<i class="fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+<form id="form" action="{:url('set')}" method="post" class="form-horizontal">
+					<div class="ibox-content">
+                        <div class="tab-wrapper tab-primary">
+                            <div class="tab-content">
+<div class="form-group">
+	<label class="col-sm-2 control-label">公众号名称</label>
+	<div class="col-sm-6">
+		<input type="text" name="name" class="form-control w50" value="{$data.name}"/>
+	</div>
+</div>
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">接口地址</label>
+	<div class="col-sm-6">
+		<input type="text" name="url" class="form-control w50" value="{$data.url}" />
+	</div>
+</div>
+
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Appid</label>
+	<div class="col-sm-6">
+		<input type="text" name="appid" class="form-control w50" value="{$data.appid}"/>
+	</div>
+</div>
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Appsecret</label>
+	<div class="col-sm-6">
+		<input type="text" name="appsecret" value="{$data.appsecret}" class="form-control">
+	</div>
+</div>
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Token</label>
+    <div class="col-sm-6">
+        <input type="text" name="token" class="form-control w50" value="{$data.token}"/>
+    </div>
+    <div class="col-sm-1">
+        <a href="javascript:;" id="createToken" data-num="32" class="btn btn-success">随机生成</a>
+    </div>
+</div>
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">Encodingaeskey</label>
+	<div class="col-sm-6">
+		<input type="text" name="encodingaeskey" class="form-control w50" value="{$data.encodingaeskey}"/>
+	</div>
+    <div class="col-sm-1">
+        <a href="javascript:;" id="createEncodingaeskey" data-num="43" class="btn btn-success">随机生成</a>
+    </div>
+</div>
+
+<div class="hr-line-dashed"></div>
+<div class="form-group">
+	<div class="col-sm-4 col-sm-offset-2">
+		<button class="btn btn-primary" type="submit">保存信息</button>
+	</div>
+</div>                                          
+                                    </div>
+                                </div>
+                            </div>
+					</form>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+	</body>
+<script type="text/javascript">
+$(document).ready(function(){
+	 var valid = $("#form").Validform({
+        tiptype:function(msg){
+            layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+        },
+        tipSweep:true,
+        postonce:true,
+        beforeSubmit:function(form){
+        	// return false;
+        	var name=$('input[name=name]').val();
+        	if(!name){
+        		layer.msg('请输入公众号名称',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	var url=$('input[name=url]').val();
+        	if(!url){
+        		layer.msg('请输入接口地址',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	var appid=$('input[name=appid]').val();
+        	if(!appid){
+        		layer.msg('请输入Appid',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	var appsecret=$('input[name=appsecret]').val();
+        	if(!appsecret){
+        		layer.msg('请输入Appsecret',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	var token=$('input[name=token]').val();
+        	if(!token){
+        		layer.msg('请输入Token',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	var encodingaeskey=$('input[name=encodingaeskey]').val();
+        	if(!encodingaeskey){
+        		layer.msg('请输入Encodingaeskey',{skin:"layui-layer-hui",time:1000});
+        		return false;
+        	}
+        	layer.load(1, {shade: [0.3, '#393D49']});
+        },
+        ajaxPost:true,
+        callback:function(data){
+            layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                if(data.returnCode == 'SUCCESS'){
+                	window.location.reload();	
+                }else{
+	                layer.close(layer.load());
+	            }
+            }});
+        }
+    });
+     
+    $('#createEncodingaeskey,#createToken').click(function(){
+    	var num=$(this).data('num');
+        var randomStr = randomString(num);
+        $(this).parent().siblings('div').find('input').val(randomStr);
+    })
+
+    /**
+     * 随机字符串
+     */
+    function randomString(len) {
+    	/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+    　　var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+    　　var maxPos = $chars.length;
+    　　var pwd = '';
+    　　for (i = 0; i < len; i++) {
+    　　　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    　　}
+    　　return pwd;
+    }
+});
+</script>
+</html>

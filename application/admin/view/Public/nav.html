@@ -1,0 +1,96 @@
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span data-toggle="dropdown" class="dropdown-toggle"><img alt="image" class="img-circle m-t-xs" src="{$admin['userimg']|default='/uploads/default.jpg'}" width="70px" height="70px" />&nbsp;&nbsp;
+                            <strong style="color:white;">用户:{$admin['username']}</strong>
+                            </span>
+                            <!-- <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                               <span class="block m-t-xs"><strong>{$admin['username']}</strong></span>
+                                <span class="text-muted text-xs block">
+                                	<if condition="$admin.role eq 0 ">
+                                		超级管理员
+                                		<else/>
+	                                	<volist name="list2" id="vo2">
+											<if condition="$admin.role eq $vo2.id ">
+												{$vo2.name}
+											</if>
+											<if condition="$admin.role eq 0 ">
+												超级管理员
+											</if>
+										</volist>
+									</if>
+                                	<b class="caret"></b></span>
+                                </span>
+                            </a> -->
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="{:url('Index/pwd')}">修改密码</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">{$admin.role_name}</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">H+</div>
+                    </li>
+                               
+													
+					  <li> 
+					    {volist name="menu" id="vo"}
+					    {if condition="$vo['pid'] eq 1"}
+					        {if condition="$vo['single'] eq 1"}
+					              <li            
+					                {if condition="(strtolower($nownav['m']) eq strtolower($vo['m']))"}
+					                 class="active"
+					                 {/if}
+					                ><a href="{:url($vo['m'].'/'.$vo['a'])}"><i class="icon {$vo.ico}"></i> <span>{$vo.title}</span>
+                                    {if condition="($vo['m'] eq 'index') and ($vo['a'] eq 'index')"}
+                                        <span class="label label-danger pull-right" id='unread_order_num'>{$Think.session.unread_order_num?$Think.session.unread_order_num:''}</span>    
+                                    {/if}
+					                </a>
+                                  </li>
+					        {else/}
+                                
+					            <li class='submenu
+					                {if condition="(strtolower($nownav['m']) eq strtolower($vo['m']))"}
+					                  active 
+					                 {/if}
+					                '
+					             > <a href="#"><i class="icon {$vo.ico}"></i> <span>{$vo.title}</span><span class="fa arrow"></a>
+					              <ul class="nav nav-second-level">
+					                  {volist name="menu" id="subnode"}
+					                      {if condition="$subnode['pid'] eq $vo['id']"}
+			                                 <li  
+			                                   {if condition="(strtolower($nownav['m']) eq strtolower($subnode['m']) ) && (strtolower($nownav['a']) eq strtolower($subnode['a']) )"}
+			                                   class="active"
+			                                   {/if}
+			                                ><a href="{:url($subnode['m'].'/'.$subnode['a'])}">{$subnode['title']}</a></li>
+					                      {/if}
+					                  {/volist}
+					              </ul>            
+					        {/if}      
+					     {/if}  
+					    {/volist}
+					  </li>									
+                </ul>
+            </div>
+        </nav>
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+    {include file="Public:top" /}
+    <script type="text/javascript">
+        $(".del").click(function(){
+            var thi= $(this);            
+            var href = thi.data("href");
+            $.getJSON(href,function(data){
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                    if(data.returnCode == 'SUCCESS'){
+                        window.location.reload();
+                    }
+                }});
+            });
+        });
+    </script>

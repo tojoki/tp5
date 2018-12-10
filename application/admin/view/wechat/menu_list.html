@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	{include file="Public:page_css" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                    <a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">微信管理</a> /
+                                    <a href="#" class="current"> 自定义菜单</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div class="alert alert-success">
+            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+            说明:如果选择"不使用",那么在更新微信自定义菜单时会忽略此项
+        </div>
+        <div class="row">
+            <div class="col-sm-10">
+                <a href='javascript:;' class="btn btn-success btn-sm update">更新微信菜单</a>
+            </div>
+        </div>
+
+		<br />
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5><i class="fa fa-tasks"></i> 自定义菜单列表</h5>
+					</div>
+					<div class="ibox-content">
+						<table class="table table-bordered">
+							<thead>
+								<tr class="long-tr">
+                                    <th width="5%">编号</th>
+                                    <th>菜单名称</th>
+                                    <th>是否使用</th>
+                                    <th>是否有子菜单</th>
+                                    <th width="20%">操作</th>
+								</tr>
+							</thead>
+                            <form class="form-horizontal form-border" action='' name='form' id="form" method="post">
+							<tbody>
+								{volist name="list" id="vo" key="key"}
+									<tr>
+                                        <td>{$key}</td>
+                                        <td><input name='name[]' type='text' class='form-control name_{$key}' value='{$vo.name}'></td> 
+                                        <td>
+                                            <select name='is_use[]' class='form-control is_use_{$key}'>
+                                                <option value=''>请选择</option>
+                                                <option value='0' {if condition="$vo.is_use eq '0'"}selected{/if} >不使用</option>
+                                                <option value='1' {if condition="$vo.is_use eq '1'"}selected{/if} >使用</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <select name='has_son[]' class='form-control has_son_{$key}'>
+                                                <option value=''>请选择</option>
+                                                <option value='0' {if condition="$vo.has_son eq '0'"}selected{/if} >无</option>
+                                                <option value='1' {if condition="$vo.has_son eq '1'"}selected{/if} >有</option>
+                                            </select>
+                                        </td>
+										<td class='text-center'>
+                                            <a href="javascript:;" data-key="{$key}" data-type='0' class="btn btn-primary btn-sm save">保存</a>
+											<a href="javascript:;" data-key="{$key}" data-type='1' class="btn btn-success btn-sm save">保存并进入设置页面</a>
+										</td>
+									</tr>
+								{/volist}
+							</tbody>
+                            </form>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+	</body>
+    <script type="text/javascript">
+        $(".save").click(function(){
+            var save_type=$(this).data('type');//0仅保存 1保存后跳转
+            var key=$(this).data('key');
+            var name=$('.name_'+key).val();
+            if(!name){
+                layer.msg('请输入菜单名称',{skin:"layui-layer-hui",time:1000});
+                return false;
+            }
+            var is_use=$('.is_use_'+key+' option:selected').val();
+            if(is_use==''){
+                layer.msg('请选择是否使用',{skin:"layui-layer-hui",time:1000});
+                return false;
+            }
+            var has_son=$('.has_son_'+key+' option:selected').val();
+            if(has_son==''){
+                layer.msg('请选择是否有子菜单',{skin:"layui-layer-hui",time:1000});
+                return false;
+            }
+            layer.load(1, {shade: [0.3, '#393D49']});
+            $.ajax({
+                url:'{:url("menu_list")}',
+                data:{index:key,name:name,is_use:is_use,has_son:has_son},
+                type:'post',
+                success:function(data){
+                    layer.msg(data.msg,{skin:"layui-layer-hui",time:1000});
+                    if(data.code){
+                        if(save_type==1){
+                            window.location.href=data.url;
+                        }else{
+                            window.location.reload();
+                        }
+                    }else{
+                        layer.close(layer.load());
+                    }
+                },
+                dataType:'json'
+            })
+        });
+
+        $('.update').click(function(){
+            $.get("{:url("update_wxmenu")}",function(data){        
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000});
+            },'json');
+        });
+    </script>
+</html>

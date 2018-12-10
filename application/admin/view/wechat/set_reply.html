@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom">微信管理</a> /
+									<a href="#" class="current"> 设置自定义回复</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>设置自定义回复</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link">
+								<i class="fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<form id="form-wizard" action="{:url('set_reply')}" method="post" class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">规则名称</label>
+								<div class="col-sm-4">
+									<input type="text" name="mname" placeholder="输入规则名称" class="form-control" value="{$data.mname}">
+								</div>
+							</div>
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">触发关键字</label>
+								<div class="col-sm-4">
+									<input type="text" name="keyword" placeholder="输入关键字" class="form-control" value="{$data.keyword}">
+								</div>
+								<div class="col-sm-4">
+								<p class="form-control-static text-muted">
+									多关键字半角逗号( , )隔开
+								</p>
+								</div>
+							</div>
+							
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">回复类型</label>
+								<div class="col-sm-4">
+									<select name="replytype" class="form-control" id="replyType">
+									<option value="text" {if condition="$data.replytype eq 'text'"} selected{/if}>文字回复</option>
+									<option value="news" {if condition="$data.replytype eq 'news'"} selected{/if}>图文回复</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="hr-line-dashed"></div>							
+							<div class="form-group" id="textTypeWrap">
+								<label class="col-sm-2 control-label">回复内容</label>
+								<div class="col-sm-4">
+									<textarea type="text" name="replyTextContent" id="replyTextContent"  placeholder="输入回复内容" class="form-control">{if condition="$data['replytype'] eq 'text'"}{$data.replycontent}{/if}</textarea>
+									<textarea type="text" name="replyNewsContent" id="replyNewsContent"  placeholder="输入回复内容" class="form-control hide"></textarea>
+								</div>
+								<div class="col-sm-4">
+								<p class="form-control-static text-muted">
+									&lt;a href="http://www.baidu.com"&gt;百度&lt;/a&gt;
+								</p>
+								</div>
+							</div>
+
+							<div class="form-group" id="newsTypeWrap">
+								<label class="col-sm-2 control-label">回复内容</label>
+								<div class="col-sm-4">
+									<section class="newsList" id="newsList">
+										
+									</section>
+								</div>
+								<div class="col-sm-4">
+									<a href="javascript:;" class="btn btn-success" id="addNews">添加图文</a>
+								</div>
+							</div>
+                            <div class="hr-line-dashed"></div>
+    						<div class="form-group">
+                                <label class="col-sm-2 control-label">默认回复</label>
+                                <div class="col-sm-2">
+                                    <div class="radio i-checks">
+                                        <input type="radio" name='is_default' value="1" {if condition="$data.is_default eq 1"}checked{/if}/>
+                                        是
+                                        <input type="radio" name='is_default' value="0" {if condition="$data.is_default eq 0"}checked{/if}/>
+                                        否
+                                    </div>
+                                </div>
+                                <label class="col-sm-1 control-label">关注回复</label>
+                                <div class="col-sm-2">
+                                    <div class="radio i-checks">
+                                        <input type="radio" name='is_subscribe' value="1" {if condition="$data.is_subscribe eq 1"}checked{/if}/>
+                                        是
+                                        <input type="radio" name='is_subscribe' value="0" {if condition="$data.is_subscribe eq 0"}checked{/if}/>
+                                        否
+                                    </div>
+                                </div>
+                                <label class="col-sm-1 control-label">客服接管</label>
+                                <div class="col-sm-2">
+                                    <div class="radio i-checks">
+                                       <input type="radio" name='service' value="1" {if condition="$data.service eq 1"}checked{/if}/>
+                                        是
+                                        <input type="radio" name='service' value="0" {if condition="$data.service eq 0"}checked{/if}/>
+                                        否
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-2">
+									<input type="hidden" name="mid" value="{$data.mid}">
+									<button class="btn btn-primary" type="submit">保存信息</button>
+									<a class="btn btn-danger" href="{:url('reply')}">取消</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+<!--弹出框-->
+    <div id="newsWrap" style="display: none;">
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <form class="form-horizontal form-border newsform" id="newsform" method="post">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">标题</label>
+                        <div class="col-sm-8 rightText">
+                            <input type="text" name="Title" id="Title" datatype="*" placeholder="输入标题" class="form-control" nullmsg="请输入标题" errormsg="请输入标题" >
+                        </div>
+                    </div>
+                    <div class="hr"></div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图片</label>
+                        <div class="col-sm-8">
+                            <img src="/static/admin/img/no_img.jpg" width="80" class="uploadOne">
+                            <input type="file" name="uploadfile" class="uploadfile" style="display: none;" />
+                            <input type="hidden" name="PicUrl" id="PicUrl" class="PicUrl" datatype="*" nullmsg="请上传图片" errormsg="请上传图片"/>
+                        </div>
+                    </div>
+                    <div class="hr"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">简介</label>
+                        <div class="col-sm-8">
+                            <textarea type="text" name="Description" id="Description" class="form-control"  datatype="*" nullmsg="请输入简介" errormsg="请输入简介" ></textarea>
+                        </div>
+                    </div>
+                    <div class="hr"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">原文链接</label>
+                        <div class="col-sm-8 rightText">
+                            <input type="text" name="Url" id="Url"  datatype="*" class="form-control" value=""  nullmsg="请输入原文链接" errormsg="请输入原文链接">
+                        </div>
+                    </div>
+                    <div class="hr"></div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-4">
+                        {empty name="data.state"}
+                           <button type="submit" class="btn btn-success" id="addNewsBtn">确定</button>
+                        {/empty}
+                            <a href="javascript:;" class="btn btn-default closeIframe">关闭</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<!--弹出框-->
+
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+		{js file='/static/admin/js/plugins/Sortable/Sortable.min.js' /}
+		{css file='/static/admin/css/wechat/reply.css' /}
+	    {js file='/static/admin/js/wechat/reply.js' /}
+	</body>
+	<script type="text/javascript">
+		var newsJson = {}; //图文对象		
+		{if condition="$data.replytype eq 'news'"}
+			var newsJson ={:htmlspecialchars_decode($data['replycontent'])}; //图文对象
+		{/if}
+		    
+        var uploadUrl = '{:url("Upload/new_upload")}';
+        var succ_url='{:url("reply")}';
+    </script>
+
+</html>

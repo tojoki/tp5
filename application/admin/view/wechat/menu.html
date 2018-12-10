@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<style>
+        th,td{text-align: center;}
+        .mr10{margin-right: 10px;}
+    </style>
+    <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    	{include file="Public:nav" /}
+    	<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-primary">
+                					<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom">微信设置</a> /
+                					<a href="#" class="current">自定义菜单</a>
+                				</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>自定义菜单</h5>
+            				<a class="btn btn-xs btn-info pull-right mr10" id="updateMenu">更新微信菜单</a>
+            				<a class="btn btn-xs btn-primary pull-right mr10" id="creatMenu">新建一级菜单</a>
+					</div>
+<form id="form" action="{:url('menu')}" method="post" class="form-horizontal">
+	<div class="ibox-content">
+        <div class="tab-wrapper tab-primary">
+            <div class="tab-content">
+				<div class="tab-pane active" id="base">
+					<table class="table table-bordered" id="MenuTb">
+						<thead>
+							<tr class="table2_tytle">
+		                        <td>等级</td>
+		                        <td>菜单名称</td>
+		                        <td>类型</td>
+		                        <td>值</td>
+		                        <td>操作</td>
+		                    </tr>
+						</thead>
+						{foreach name="wechatMenu" item="vo" key="k"}
+                        	<tbody menuid="{$k+1}" class="mc{$k+1}">
+                        		<tr class="parentMenu normal_li">
+	                        		<td class="text-center">{$k+1}</td>
+	                        		<td><input type="text" name="wechatMenu[{$k+1}][name]" class="form-control" id="encodingaeskey" value="{$vo.name}" maxlength="10" size="10"></td>
+	                        		<td>
+	                        			<select name="wechatMenu[{$k+1}][type]" id="menu[{$k+1}][type]" class="form-control">
+	                        			<option value="view" {if condition="$vo['type'] eq 'view'"}selected{/if}>链接</option>
+	                        			<option value="click" {if condition="$vo['type'] eq 'click'"}selected{/if}>关键字</option>
+	                        			</select>
+	                        		</td>
+	                        		<td><input type="text" name="wechatMenu[{$k+1}][value]" class="form-control" id="encodingaeskey" value="{empty name="$vo['key']"}{$vo.url}{else /}{$vo.key}{/empty}"></td>
+	                        		<td class="text-left"><a href="javascript:;" class="btn-sm btn-primary addSubMenu" menuid="{$k+1}" style="margin-right: 10px;">
+	                        		<span class="fa fa-plus fa-fw"></span>添加子菜单</a><a href="javascript:;" class="btn-sm btn-danger" id="delMenu" menuid="{$k+1}"><span class="fa fa-trash-o fa-fw"></span>删除一级菜单</a></td>
+	                        	</tr>
+                        		{volist name="vo['sub_button']" id="sub" key="sub_k"}
+                        			<tr class="subMenu mc{$k+1}-{$sub_k}" menuid="{$sub_k}">
+                        				<td class="text-center">{$k+1}-{$sub_k}</td>
+                        				<td><input type="text" name="wechatMenu[{$k+1}][sub_button][{$sub_k}][name]" class="form-control" id="encodingaeskey" value="{$sub.name}" maxlength="10" size="10"></td>
+                        				<td>
+                        					<select name="wechatMenu[{$k+1}][sub_button][{$sub_k}][type]" id="menu[{$k+1}][sub_button][{$sub_k}][type]" class="form-control">
+                        					<option value="view" {if condition="$sub['type'] eq 'view'"}selected{/if}>链接</option>
+                        					<option value="click" {if condition="$sub['type'] eq 'click'"}selected{/if}>关键字</option>
+                        					</select>
+                        				</td>
+                        				<td><input type="text" name="wechatMenu[{$k+1}][sub_button][{$sub_k}][value]" class="form-control" id="encodingaeskey" value="{empty name="sub['key']"}{$sub.url}{else /}{$sub.key}{/empty}" ></td>
+                        				<td class="text-left"><a href="javascript:;" class="btn-sm btn-danger" id="delMenu" menuid="{$k+1}-{$sub_k}"><span class="fa fa-trash-o fa-fw"></span>删除子菜单</a></td>
+                        			</tr>
+                        		{/volist}
+                        	</tbody>
+                    	{/foreach}
+                    </table>  
+				</div>
+				<div class="hr-line-dashed"></div>
+				<div class="form-group">
+					<div class="col-sm-12 text-center">
+				        <button class="btn btn-primary" type="submit">保存信息</button>
+					</div>
+				</div>                                          
+            </div>
+        </div>
+	</div>
+</form>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+	</body>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			var valid = $("#form").Validform({
+		        tiptype:function(msg){
+		            layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		        },
+		        tipSweep:true,
+		        postonce:true,
+		        beforeSubmit:function(form){
+		          // return false;
+		          layer.load(1, {shade: [0.3, '#393D49']});
+		        },
+		        ajaxPost:true,
+		        callback:function(data){
+		            layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		                if(data.returnCode == 'SUCCESS'){
+		                	window.location.reload(); //重载父页面
+		                }else{
+		                	layer.close(layer.load());
+		                }
+		            }});
+		        }
+		    });
+
+		    //创建菜单
+		    $("#creatMenu").click(function(){
+		    	var MenuLen = $("#MenuTb>tbody").length;
+			    if(MenuLen < 3){
+			    	var MenuID = MenuLen == 0 ? 1 : parseInt($("#MenuTb>tbody:last").attr("menuid")) + 1;
+			    	var menuHtml = '<tbody menuid="'+ MenuID +'" class="mc'+ MenuID +'">'+
+			                     '<tr class="parentMenu">'+
+			                        '<td class="text-center">'+ MenuID +'</td>'+
+			                        '<td><input type="text" name="wechatMenu['+ MenuID +'][name]" class="form-control"'+
+			                        'class="form" id="encodingaeskey" value="" '+
+			                        'maxlength="10" size="10" /></td>'+
+			                        '<td>'+
+			                        '<select name="wechatMenu['+ MenuID +'][type]" id="menu['+ MenuID +'][type]" class="form-control">'+
+			                          '<option value="view">链接</option>'+
+			                          '<option value="click">关键字</option>'+
+			                        '</select>'+
+			                        '</td>'+
+			                        '<td><input type="text" name="wechatMenu['+ MenuID +'][value]"'+
+			                        ' class="form-control" id="encodingaeskey"'+ 
+			                        'value=""/></td>'+
+			                        '<td class="text-left">'+
+			                          '<a href="javascript:;" class="btn-sm btn-primary addSubMenu" style="margin-right:10px;" MenuID = '+ MenuID +'>'+
+			                          '<span class="fa fa-plus fa-fw"></span> 添加子菜单</a>'+
+			                          '<a href="javascript:;" class="btn-sm btn-danger" id="delMenu" MenuID = '+ MenuID +'>'+
+			                          '<span class="fa fa-trash-o fa-fw"></span> 删除</a>'+
+			                       '</td>'+
+			                      '</tr> '+                     
+			                    '</tbody>';
+			    	if(MenuID == 1){
+			        	$("#MenuTb>thead").after(menuHtml);
+			    	}else{
+			    		$("#MenuTb>tbody:last").after(menuHtml);
+			    	}
+			    }else{
+			        layer.msg('微信最多设置3个一级菜单',{skin:"layui-layer-hui",time:1000});
+			    }
+			});
+
+		    //创建子菜单
+		    $(document).on('click','.addSubMenu',function(){
+		    	var ID = $(this).attr("MenuID");
+		    	var MenuLen = $("tbody[menuid = '"+ ID +"']").children("tr.subMenu").length;
+		    	if(MenuLen < 5){
+		    		var MenuID = MenuLen == 0 ? 1 : parseInt($("tbody[menuid = '"+ ID +"']>tr.subMenu:last").attr("menuid")) + 1;              
+		    		var menuHtml =    '<tr class="subMenu mc'+ ID +'-'+ MenuID +'" menuid="'+ MenuID +'" >'+
+		                        '<td class="text-center" >'+ ID +'-'+ MenuID +'</td>'+
+		                        '<td><input type="text" name="wechatMenu['+ ID +'][sub_button]['+ MenuID +'][name]" class="form-control"'+
+		                        'class="form" id="encodingaeskey" value="" '+
+		                        'maxlength="10" size="10" /></td>'+
+		                        '<td>'+
+		                        '<select name="wechatMenu['+ ID +'][sub_button]['+ MenuID +'][type]" id="menu['+ ID +'][sub_button]['+ MenuID +'][type]" class="form-control">'+
+		                          '<option value="view">链接</option>'+
+		                          '<option value="click">关键字</option>'+
+		                        '</select>'+
+		                        '</td>'+
+		                        '<td><input type="text" name="wechatMenu['+ ID +'][sub_button]['+ MenuID +'][value]"'+
+		                        ' class="form-control" id="encodingaeskey"'+ 
+		                        'value=""/></td>'+
+		                        '<td class="text-left">'+                          
+		                          '<a href="javascript:;" class="btn-sm btn-danger" id="delMenu" MenuID = '+ ID + '-' + MenuID +'>'+
+		                          '<span class="fa fa-trash-o fa-fw"></span> 删除</a>'+
+		                       '</td>'+
+		                      '</tr> ';
+		        	$("tbody[menuid = '"+ ID +"'] tr:last").after(menuHtml);
+		    	}else{
+		        	layer.msg('微信最多设置5个子菜单',{skin:"layui-layer-hui",time:1000});
+		    	}
+		    });
+
+		    //更新微信菜单
+		    $('#updateMenu').click(function(){
+		        $.get("{:url("updateMenu")}",function(data){        
+		            layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000});
+		        },'json');
+		    });
+
+		    //删除菜单
+		    $(document).on('click','#delMenu',function(){
+		        $('.mc'+$(this).attr('MenuID')).remove();
+		    });     
+		});
+	</script>
+</html>

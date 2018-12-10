@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox-content">
+					<form id="form-wizard" action="" method="post" class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">控制器</label>
+							<div class="col-sm-6">
+								<input type="text" name="controller_name" value="" placeholder="请输入控制器名" class="form-control">
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">所属模块</label>
+							<div class="col-sm-6">
+								<select name='module_name' class='form-control'>
+									<option value=''>请选择</option>
+									{volist name='module_list' id='v'}
+										<option value='{$v}'>{$v}</option>
+									{/volist}
+								</select>
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">继承控制器</label>
+							<div class="col-sm-6">
+								<select name='extends_name' class='form-control'>
+									<option value=''>请选择</option>
+								</select>
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<button class="btn btn-primary" type="submit">保存信息</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		{include file="Public:form" /}
+	</body>
+	<script type="text/javascript">
+		//模块切换时 查询其所有控制器
+		$('select[name=module_name]').on('change',function(){
+			$('select[name=extends_name]').empty();
+			$('select[name=extends_name]').append('<option value="">请选择</option>');
+			var module_name=$(this).val();
+			if(module_name){
+				layer.load(1, {shade: [0.3, '#393D49']});
+				$.ajax({
+					url:'{:url("getAllControllers")}',
+					data:{module_name:module_name},
+					type:'post',
+					success:function(data){
+						if(data.list.length>0){
+							var ops;
+							$.each(data.list,function(i,result){
+								ops+='<option value="'+result+'">'+result+'</option>';
+							})
+							$('select[name=extends_name]').append(ops);
+						}
+						layer.close(layer.load());
+					},
+					dataType:'json'
+				})
+			}
+		})
+		//表单验证
+		var valid = $("#form-wizard").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	// return false;
+		    	var controller_name=$('input[name=controller_name]').val();
+		    	if(!controller_name){
+		    		layer.msg('请输入控制器名',{skin:'layui-layer-hui',time:1000});
+		    		return false;
+		    	}
+		    	var module_name=$('select[name=module_name] option:selected').val();
+		    	if(!module_name){
+		    		layer.msg('请选择模块名',{skin:'layui-layer-hui',time:1000});
+		    		return false;
+		    	}
+		    	layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+		            	window.parent.location.reload(); //重载父页面
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+	</script>
+</html>

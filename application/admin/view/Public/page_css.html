@@ -1,0 +1,45 @@
+<style>
+    .pages a,.pages span {
+        display:inline-block;
+        padding:4px 7px;
+        margin:0 2px;
+        border:1px solid #D5D4D4;
+        -webkit-border-radius:1px;
+        -moz-border-radius:1px;
+        border-radius:1px;
+    }
+    /*pages li为总条数与页码状态的li*/
+    .pages a,.pages li {
+        display:inline-block;
+        list-style: none;
+        text-decoration:none; 
+        color:#077ee3;
+        vertical-align: middle;
+    }
+    /*非当前页的悬浮样式*/
+    .pages li a:hover{
+        border-color:#077ee3;
+    }
+    /*当前页的样式*/
+    .pages li.active span{
+        background:#077ee3;
+        color:#FFF;
+        font-weight:700;
+        border-color:#077ee3;
+    }
+    /*当前页的悬浮样式*/
+    .pages li.active span:hover{
+        background:#077ee3;
+        color:#FFF;
+        font-weight:700;
+        border-color:#077ee3;
+        cursor:text;
+    }
+
+    .long-tr th{
+    	text-align: center
+    }
+    .long-td td{
+    	text-align: center
+    }
+</style>

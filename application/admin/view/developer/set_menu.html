@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<link rel="stylesheet" href="/static/admin/font-awesome-4.7.0/css/font-awesome.min.css">
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                	<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">菜单管理</a> /
+                                    <a href="#" class="current"> 设置菜单</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>设置菜单</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link">
+								<i class="fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<form class="form-horizontal" method="post" name="basic_validate" id="myform" action="{:url('set_menu')}">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">菜单名称</label>
+								<div class="col-sm-2">
+									<input type="text" name="title" id="title" placeholder="菜单名称" class="form-control" value="{$data.title}">
+								</div>
+								<label class="col-sm-2 control-label">多节点</label>
+								<div class=" col-sm-2">
+									<div class="radio">
+										{if condition="$data['single'] eq '0' "}
+											<input type="checkbox" name='single' value="1" class="js-switch" checked />
+	                        			{else/}
+	                        				<input type="checkbox" name='single' value="1" class="js-switch" />
+	                        			{/if}
+	                        		</div>
+								</div>
+							</div>
+							<div class="hr-line-dashed"></div>
+
+							<div class="form-group">
+								<label class="col-sm-2 control-label">控制器</label>
+								<div class=" col-sm-2">
+									<input type="text" name="mm" placeholder="控制器" class="form-control" value="{$data.m}">
+								</div>
+								<label class="col-sm-2 control-label">方法</label>
+								<div class=" col-sm-2">
+									<input type="text" name="aa" placeholder="方法" class="form-control" value="{$data.a}">
+								</div>
+							</div>
+
+
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">排序号</label>
+								<div class=" col-sm-2">
+									<input type="text" name="sort" placeholder="排序号" class="form-control" value="{$data.sort}" >
+								</div>
+								<label class="col-sm-2 control-label">是否显示</label>
+								<div class="col-sm-6">
+									<div class="radio">
+										{if condition="$data['is_hide'] eq '0' "}
+											<input type="checkbox" name='is_hide' value="1" class="js-switch2" checked />
+	                        			{else/}
+	                        				<input type="checkbox" name='is_hide' value="1" class="js-switch2" />
+	                        			{/if}
+	                        		</div>
+								</div>
+							</div>
+
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">icon图标</label>
+								<div class=" col-sm-8">
+									<table>
+										<tr>
+											{volist name='icon_list' id='v' key="key"}
+												<td>
+													<input name='ico' type='radio' value="{$v['icon']}" {if condition="$data['ico'] eq $v['icon']"}checked{/if} >&nbsp;<i class="{$v['icon']}"></i>&nbsp;&nbsp;
+												</td>
+												{if condition="($key%15==0)"}
+													</tr><tr>
+												{/if}
+											{/volist}	
+										</tr>
+									</table>
+								</div>
+							</div>
+
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-2">
+									<input name="id" type="hidden" value="{$Request.param.id}"/>
+									<button class="btn btn-primary" type="submit">保存内容</button>
+									<a class="btn btn-danger" href="javascript:history.back();">取消</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+		<script type="text/javascript" src="/static/admin/js/plugins/Sortable/Sortable.min.js"></script>
+	</body>
+	<script type="text/javascript">
+		//IOS开关样式配置
+        var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+        var elem2 = document.querySelector('.js-switch2');
+        var switchery2 = new Switchery(elem2, {
+            color: '#1AB394'
+        });
+
+		//表单验证
+		var valid = $("#myform").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	var title=$('input[name=title]').val();
+				if(!title){
+					layer.msg('请输入菜单名称',{skin:"layui-layer-hui",time:1000});
+					return false;
+				}
+				var m=$('input[name=mm]').val();
+				if(!m){
+					layer.msg('请输入控制器',{skin:"layui-layer-hui",time:1000});
+					return false;
+				}
+				// 选中状态时为多节点 值为1 非选中状态是单节点 值为undefined
+				var single=$(':checkbox[name=single]:checked').val();
+				if(!single){
+					//如果是单节点 需要判断方法字段非空
+					var a=$('input[name=aa]').val();
+					if(!a){
+						layer.msg('请输入方法',{skin:"layui-layer-hui",time:1000});
+						return false;
+					}
+				}
+				var sort=$('input[name=sort]').val();
+				if(!sort || isNaN(sort) || sort<=0){
+					layer.msg('请输入排序号',{skin:"layui-layer-hui",time:1000});
+					return false;
+				}
+				var ico=$('input[name=ico]:checked').val();
+				if(!ico){
+					layer.msg('请选择图标',{skin:"layui-layer-hui",time:1000});
+					return false;
+				}
+
+				layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+						window.location.href="{:url('menu_lists')}";
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+	</script>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<style>
+		.tab-content{
+			padding: 20px;
+		}
+		.pointPackItem{
+			margin-bottom: 5px!important;
+		}
+		.ico{
+			padding: 0 10px;
+		}
+	</style>
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom">开发管理</a> /
+									<a href="#" class="current">设置网站</a>
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+<form id="signupForm" action="{:url('site_index')}" method="post" class="form-horizontal">
+	<div class="ibox-content">
+        <div class="tab-wrapper tab-primary">
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#base" data-toggle="tab">基础设置</a></li>
+                <li><a href="#other" data-toggle="tab">其他设置</a></li>
+            </ul>
+            <div class="tab-content">
+				<!-- 基础设置 -->
+                <div class="tab-pane active" id="base">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">网站名称</label>
+						<div class="col-sm-6">
+							<input type="text" name="sitename" value="{:config('site.sitename')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">URL地址</label>
+						<div class="col-sm-6">
+							<input type="text" name="siteurl" value="{:config('site.siteurl')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">SEO关键字</label>
+						<div class="col-sm-6">
+							<input type="text" name="keyword" value="{:config('site.keyword')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">网站描述信息</label>
+						<div class="col-sm-6">
+							<input type="text" name="content" value="{:config('site.content')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">联系QQ</label>
+						<div class="col-sm-6">
+							<input type="text" name="qq" value="{:config('site.qq')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">联系电话</label>
+						<div class="col-sm-6">
+							<input type="text" name="linktel" value="{:config('site.linktel')}" class="form-control">
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备案信息</label>
+						<div class="col-sm-6">
+							<textarea type="text" name="address" class="form-control">{:config('site.address')}</textarea>
+						</div>
+					</div>
+					<div class="hr-line-dashed"></div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">版权信息</label>
+						<div class="col-sm-6">
+							<textarea type="text" name="copyright" class="form-control">{:config('site.copyright')}</textarea>
+						</div>
+					</div>
+                </div>
+				<!-- 基础设置 -->
+				<!-- 其他设置 -->
+                <div class="tab-pane" id="other">
+					<div class="form-group">
+	                	<label class="col-sm-2 control-label">使用封面图</label>
+						<div class="col-sm-6">
+							<div class="radio">
+								<input type="checkbox" name='use_cover' value="1" class="js-switch" {:config('site.use_cover')=='1'?'checked':''} />
+	                		</div>
+						</div>
+					</div>
+                	<div class="hr-line-dashed"></div>
+                	<div class="form-group">
+						<label class="col-sm-2 control-label">封面图 </label>
+						<div class="col-sm-6">
+							<div style="width: 200px; height: 90px; float: left;">
+								<input type="hidden" name="homepage_cover" value="{:config('site.homepage_cover')}" id="data_photo" />
+								<input id="photo_file" name="photo_file" type="file" multiple="true" value="" />
+							</div>
+							<div style="width: 200px; height: 90px; float: left;">
+								<img id="upload_img" src="{:config('site.homepage_cover')?config('site.homepage_cover'):'/static/admin/img/no_img.jpg'}" style="width: 150px;height: 100px" />
+							</div>
+						</div>
+					</div>
+                </div>
+                <!-- 其他设置 -->
+				<div class="hr-line-dashed"></div>
+				<div class="form-group">
+					<div class="col-sm-4 col-sm-offset-2">
+						<button class="btn btn-primary" type="submit">保存信息</button>
+						<a class="btn btn-danger" href="{:url('index')}">取消</a>
+					</div>
+				</div>                                          
+            </div>
+       	</div>
+   	</div>
+</form>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+		{include file="Public:upload" /}
+	</body>
+	<script type="text/javascript">
+		$("#photo_file").uploadify({
+			'swf': '/static/common/js/uploadify/uploadify.swf?t={$nowtime}',
+			'uploader': '{:url("Upload/new_upload")}',
+			'cancelImg': '/static/common/js/uploadify/uploadify-cancel.png',
+			'buttonText': '上传封面',
+			'height': 35,
+			'fileTypeExts': '*.gif;*.jpg;*.png',
+			'queueSizeLimit': 1,
+			'onUploadSuccess': function(file, data, response) {
+				$("#data_photo").val(data);
+				$("#upload_img").attr('src', data).show();
+			}
+		});
+		//IOS开关样式配置
+        var elem = document.querySelector('.js-switch');
+        var switchery = new Switchery(elem, {
+            color: '#1AB394'
+        });
+		//表单验证
+		var valid = $("#signupForm").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	var sitename=$('input[name=sitename]').val();
+				if(!sitename){
+					layer.msg('请输入网站名称',{skin:'layui-layer-hui',time:1000});
+					return false;
+				}
+				var use_cover=$(':checkbox[name=use_cover]:checked').val();
+				if(use_cover){
+					//如果使用封面图 再判断是否上传了封面图
+					var homepage_cover=$('input[name=homepage_cover]').val();
+					if(!homepage_cover){
+						layer.msg('请上传封面图',{skin:'layui-layer-hui',time:1000});
+						return false;
+					}
+				}
+				// var address=$('textarea[name=address]').val();
+				// if(!address){
+				// 	layer.msg('请输入备案信息',{skin:'layui-layer-hui',time:1000});
+				// 	return false;
+				// }
+				// var copyright=$('textarea[name=copyright]').val();
+				// if(!copyright){
+				// 	layer.msg('请输入版权信息',{skin:'layui-layer-hui',time:1000});
+				// 	return false;
+				// }
+				layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+		                window.location.reload();
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+	</script>
+</html>

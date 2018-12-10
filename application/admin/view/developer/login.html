@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    {include file="Public:header" /}
+    <style>
+        .page-heading { padding: 0; height: 40px; line-height: 40px; }
+    </style>
+    <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+        {include file="Public:nav" /}
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                    <a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom" >开发管理</a> /
+                                    <a href="#" class="current"> 登录账号</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row" >
+            <div class="col-sm-4" style='float:none;margin:0 auto;'>
+                <form method="post" id='form-horizontal'>
+                    <input type="text" class="form-control uname" name="developer_name" placeholder="账号" style="margin-top:20px;" />
+                    <input type="password" class="form-control pword m-b" name="developer_pwd" placeholder="密码" style="margin-top:20px;margin-bottom:20px;" />
+                    <input type="submit" class="btn btn-success btn-block" value='登&nbsp;&nbsp;&nbsp;录'>
+                </form>
+            </div>
+        </div>
+        {include file="Public:footer" /}
+        {include file="Public:form" /}
+    </body>
+    <script type="text/javascript">
+        //表单验证
+        var valid = $("#form-horizontal").Validform({
+            tiptype:function(msg){
+                layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+            },
+            tipSweep:true,
+            postonce:true,
+            beforeSubmit:function(form){
+                var developer_name=$('input[name=developer_name]').val();
+                if(!developer_name){
+                    layer.msg('请输入账号',{skin:'layui-layer-hui',time:1000});
+                    return false;
+                }
+                var developer_pwd=$('input[name=developer_pwd]').val();
+                if(!developer_pwd){
+                    layer.msg('请输入密码',{skin:'layui-layer-hui',time:1000});
+                    return false;
+                }
+                layer.load(1, {shade: [0.3, '#393D49']});
+            },
+            ajaxPost:true,
+            callback:function(data){
+                layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                    if(data.returnCode == 'SUCCESS'){
+                        window.location.href="{:url('index')}"; //重载父页面
+                    }else{
+                        layer.close(layer.load());
+                    }
+                }});
+            }
+        });
+    </script>
+</html>

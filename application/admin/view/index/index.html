@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+    {include file="Public:header" /}
+    <body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+        {include file="Public:nav" /}
+            <div class="wrapper wrapper-content">
+            	{if condition="config('site.use_cover') eq '1'"}
+                    <center>
+                        <img src="{:config('site.homepage_cover')}" style="width:100%;height:100%;">
+                    </center>
+                {/if}
+            </div>
+        {include file="Public:footer" /}
+    </body>
+</html>

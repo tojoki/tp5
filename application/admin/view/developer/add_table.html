@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content no-padding">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <p class="text-success">
+                                	<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+                                    <a href="#" class="tip-bottom">开发管理</a> /
+                                    <a href="#" class="current"> 快速建表</a>
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+		</div>
+        <div class="alert alert-success">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			说明:该功能仅整合了部分常用的建表习惯(引擎默认innodb 字符集utf-8 数据类型为常用几个类型 主键默认自增) 如要完整建表建议使用专业mysql软件进行开发
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>快速建表</h5>
+						<div class="ibox-tools">
+							<a class="collapse-link">
+								<i class="fa fa-chevron-up"></i>
+							</a>
+						</div>
+					</div>
+					<div class="ibox-content">
+						<form id="form-wizard" action="{:url('add_table')}" method="post" class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">完整表名(含前缀)</label>
+								<div class="col-sm-3">
+									<input type="text" name="table_name" class="form-control">
+								</div>
+								<label class="col-sm-2 control-label">描述</label>
+								<div class="col-sm-3">
+									<input type="text" name="table_desc" class="form-control">
+								</div>
+							</div>
+							
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">字段<br>
+									<a href="javascript:;" id='add' class="btn btn-primary btn-sm">增加</a>
+								</label>
+								<div class="col-sm-10 format">
+									<span>
+										<input name='field_name[]' type='text' style="width:100px;" placeholder='字段名称'>
+										<select name='field_type[]' style="width:100px;">
+											<option value=''>数据类型</option>
+											<option value='decimal'>decimal</option>
+											<option value='float'>float</option>
+											<option value='int'>int</option>
+											<option value='longtext'>longtext</option>
+											<option value='tinyint'>tinyint</option>
+											<option value='varchar'>varchar</option>
+										</select>
+										<input name='field_length[]' type='text' style="width:50px;" placeholder='长度'>
+										<input name='field_defaut[]' type='text' style="width:100px;" placeholder='默认'>
+										<select name='is_key[]' style="width:100px;">
+											<option value='0'>非主键</option>
+											<option value='1'>主键</option>
+										</select>
+										<input name='field_comment[]' type='text' style="width:200px;" placeholder='注释'>
+										<a href="javascript:;" class="btn btn-danger btn-sm del">删除</a>
+										<br>
+									</span>
+								</div>
+							</div>
+                            
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-4 col-sm-offset-2">
+									<button class="btn btn-primary" type="submit">保存信息</button>
+									<a class="btn btn-danger" href="{:url('index')}">取消</a>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+		{include file="Public:form" /}
+	</body>
+	<script type="text/javascript">
+
+	 	$('#add').on('click',function(){
+            var new_tr="<span><input name='field_name[]' type='text' style='width:100px;' placeholder='字段名称'> <select name='field_type[]' style='width:100px;'><option value=''>数据类型</option><option value='decimal'>decimal</option><option value='float'>float</option><option value='int'>int</option><option value='longtext'>longtext</option><option value='tinyint'>tinyint</option><option value='varchar'>varchar</option></select> <input name='field_length[]' type='text' style='width:50px;' placeholder='长度'> <input name='field_defaut[]' type='text' style='width:100px;' placeholder='默认'> <select name='is_key[]' style='width:100px;'><option value='0'>非主键</option><option value='1'>主键</option></select> <input name='field_comment[]' type='text' style='width:200px;' placeholder='注释'> <a href='javascript:;' class='btn btn-danger btn-sm del'>删除</a><br></span>";
+            $(".format").append(new_tr);
+        });
+
+        $(".format").delegate(".del","click",function(){
+            $(this).parent().remove();
+        });
+
+        //切换数据类型时 
+		$(".format").delegate('select[name="field_type[]"]',"change",function(){
+        	var value=$(this).val();
+        	if(value=='float' || value=='longtext'){
+        		$(this).next().val('');//清空长度
+        		$(this).next().attr('readonly','readonly');//追加只读属性
+        	}else{
+        		$(this).next().removeAttr('readonly');//取消只读属性
+        	}
+        })
+
+        //切换主键类型时
+        $(".format").delegate('select[name="is_key[]"]',"change",function(){
+        	var value=$(this).val();
+        	if(value==1){
+        		$('select[name="is_key[]"]').val(0);//先设置所有项均为0
+        		$(this).val(1);//再设置自己为1
+        	}
+        })
+
+
+		//表单验证
+		var valid = $("#form-wizard").Validform({
+		    tiptype:function(msg){
+		        layer.msg(msg,{skin:"layui-layer-hui",time:1000});
+		    },
+		    tipSweep:true,
+		    postonce:true,
+		    beforeSubmit:function(form){
+		    	var table_name=$('input[name=table_name]').val();
+		    	if(!table_name){
+		    		layer.msg('请输入表名',{skin:"layui-layer-hui",time:1000});
+		    		return false;
+		    	}
+		    	var table_desc=$('input[name=table_desc]').val();
+		    	if(!table_desc){
+		    		layer.msg('请输入描述',{skin:"layui-layer-hui",time:1000});
+		    		return false;
+		    	}
+		    //字段
+		    	var field_name_flag=true;
+	            var field_name=[];
+	            $('input[name="field_name[]"]').each(function(){
+	                if($(this).val()==''){
+	                    field_name_flag=false;
+	                }else{
+	                    field_name[field_name.length]=$(this).val();
+	                }
+	            });
+	            if(!field_name_flag){
+	                layer.msg('请输入字段名称',{skin:"layui-layer-hui",time:1000});
+	                return false;
+	            }
+
+	            var field_type_flag=true;
+	            var field_type=[];
+	            $('select[name="field_type[]"] option:selected').each(function(){
+	            	if($(this).val()==''){
+	            		field_type_flag=false;
+	            	}else{
+	            		field_type[field_type.length]=$(this).val();
+	            	}
+	            })
+	            if(!field_type_flag){
+	                layer.msg('请选择字段类型',{skin:"layui-layer-hui",time:1000});
+	                return false;
+	            }
+
+	            var field_length_flag=true;
+	            var field_length=[];
+	            $('input[name="field_length[]"]').each(function(){
+	                var option_value=$(this).prev().val();
+	                if($(this).val()==''){
+	                	//查询其字段类型
+	                	if(option_value!='float' && option_value!='longtext'){
+	                		field_length_flag=false;
+	                	}
+	                }else{
+	                	if(option_value!='decimal' && isNaN($(this).val())){
+	                		field_length_flag=false;
+	                	}else{
+	                		field_length[field_length.length]=$(this).val();
+	                	}
+	                }
+	            });
+	            if(!field_length_flag){
+	                layer.msg('请输入字段长度',{skin:"layui-layer-hui",time:1000});
+	                return false;
+	            }
+
+	            var field_key=[];
+	            $('select[name="is_key[]"] option:selected').each(function(){
+	            	if($(this).val()=='1'){
+	            		field_key[field_key.length]=$(this).val();
+	            	}
+	            })
+	            if(field_key.length>1){
+	                layer.msg('主键只能选择一个',{skin:"layui-layer-hui",time:1000});
+	                return false;
+	            }
+	            
+	            if(field_name.length==0 || field_type.length==0 ){
+	                layer.msg('请至少添加一个字段',{skin:"layui-layer-hui",time:1000});
+	                return false;
+	            }
+	            layer.load(1, {shade: [0.3, '#393D49']});
+		    },
+		    ajaxPost:true,
+		    callback:function(data){
+		        layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+		            if(data.returnCode == 'SUCCESS'){
+						window.location.href='{:url("index")}'; 
+		            }else{
+	                	layer.close(layer.load());
+	                }
+		        }});
+		    }
+		});
+	</script>
+</html>

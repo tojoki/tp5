@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	{include file="Public:header" /}
+	{include file="Public:page_css" /}
+	<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+		{include file="Public:nav" /}
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content no-padding">
+						<ul class="list-group">
+							<li class="list-group-item">
+								<p class="text-success">
+									<a href="{:url('Index/index')}" title="返回首页" class="tip-bottom"><i class="fa fa-home"></i> 首页</a> /
+									<a href="#" class="tip-bottom"> 系统管理</a> / 
+									<a href="#" class="tip-bottom">角色管理</a></p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<a href="{:url('set_role')}" class="btn btn-primary btn-sm">添加角色</a>
+		<br />
+		<br />
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5><i class="fa fa-tasks"></i> 角色列表</h5>
+					</div>
+					<div class="ibox-content">
+						<table class="table table-bordered">
+							<thead>
+								<tr class="long-tr">
+									<th>编号</th>
+									<th>角色名称</th>
+									<th>备注信息</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								{volist name="list" id="vo" key="key"}
+									<tr class="long-td">
+										<td>{$key}</td>
+										<td>{$vo.name}</td>
+										<td>{$vo.remark}</td>
+										<td>
+											{switch name='vo.status'}
+												{case value='1'}<span class='label label-primary'>正常</span>{/case}
+												{case value='0'}<span class='label label-danger'>停用</span>{/case}
+											{/switch}
+										</td>
+										<td>
+											<a href="{:url('setting',array('id'=>$vo['id']))}" class="btn btn-success btn-sm">权限设置</a>&nbsp;&nbsp;
+											<a href="{:url('set_role',array('id'=>$vo['id']))}" class="btn btn-primary btn-sm">编辑</a>&nbsp;&nbsp;
+										{if condition="$Think.session.admin.role neq $vo.id"}
+											<a data-href="{:url('del_role',array('id'=>$vo['id']))}" class="btn btn-danger btn-sm del">删除</a>
+										{/if}
+										</td>
+									</tr>
+								{/volist}
+							</tbody>
+						</table>
+						<div class="pages" style=" text-align: right;">
+							{$list->render()}
+							<li class="rows">共<b>{$list->total()}</b>条记录&nbsp;第<b>{$list->currentPage()}</b>页/共<b>{$list->lastPage()}</b>页</li>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{include file="Public:footer" /}
+	</body>
+	<script type="text/javascript">
+		$(".del").click(function(){
+            var thi= $(this);            
+            var href = thi.data("href");
+            layer.confirm('该角色对应的用户也将删除 确定？', {icon: 3}, function(index){
+                $.getJSON(href,function(data){
+                    layer.msg(data.returnMsg,{skin:"layui-layer-hui",time:1000,end:function(){
+                        if(data.returnCode == 'SUCCESS'){
+                            window.location.reload();
+                        }
+                    }});
+                });
+            });
+        });
+	</script>
+</html>
